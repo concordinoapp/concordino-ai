@@ -30,7 +30,7 @@ Here's the steps you must follow to make the API work :
 7. To the preditc an image using Postman :
     
     1. Create a post request to http://{SERVER_IP}:5000/predict_image 
-    2. Go to body, select "form-data", name the Key "image" and select "fiel" as a type, then select your image in the "value" column
+    2. Go to body, select "form-data", name the Key "image" and select "file" as a type, then select your image in the "value" column
     3. Press send  
 
 
