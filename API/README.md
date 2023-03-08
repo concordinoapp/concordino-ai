@@ -20,7 +20,7 @@ Here's the steps you must follow to make the API work :
 
 4. Start the project
 
-``python3 app.py``
+``flask run``
 
 5. You can see that the API start on port 5000. 
 6. The API only has 2 routes :
