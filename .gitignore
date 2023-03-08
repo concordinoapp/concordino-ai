@@ -128,3 +128,4 @@ dmypy.json
 # Pyre type checker
 .pyre/
 wine_dataset/data
+ocr-machine-learning-research/CNN-OCR-MODEL/data
