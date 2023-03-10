@@ -129,3 +129,4 @@ dmypy.json
 .pyre/
 wine_dataset/data
 ocr-machine-learning-research/CNN-OCR-MODEL/data
+API/__uploaded_files__/

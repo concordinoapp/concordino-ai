@@ -10,54 +10,99 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # or any {'0', '1', '2'}
 
 app = Flask(__name__)
 
-# basic_ocr_model = tf.keras.models.load_model('./models/basic-ocr-model')
-ocr_captcha_model = tf.keras.models.load_model('./models/ocr-captcha-model')
-ocr_captcha_prediction_model = keras.models.Model(
-    ocr_captcha_model.get_layer(name='image').input,
-    ocr_captcha_model.get_layer(name='dense2').output
-)
-characters = ['2', '3', '4', '5', '6', '7', '8', 'b', 'c', 'd', 'e', 'f', 'g', 'm', 'n', 'p', 'w', 'x', 'y']
-char_to_num = layers.StringLookup(vocabulary=list(characters), mask_token=None)
-num_to_char = layers.StringLookup(vocabulary=char_to_num.get_vocabulary(), mask_token=None, invert=True)
+UPLOADED_FILE_DIRECTORY = os.getcwd() + "/" + "__uploaded_files__/"
+# Create uploaded file directory if does not exists
+if os.path.exists(UPLOADED_FILE_DIRECTORY) == False:
+    os.makedirs(UPLOADED_FILE_DIRECTORY)
 
+cnn_ocr_model = tf.keras.models.load_model('./models/CNN-OCR-MODEL/')
+cnn_ocr_prediction_model = keras.models.Model(
+    cnn_ocr_model.get_layer(name='image').input,
+    cnn_ocr_model.get_layer(name='dense2').output
+)
 
 @app.route('/ping')
 def ping():
     return "AI API running"
 
-# @app.route("/basic-ocr-model/predict_image", methods=['POST'])
-# def basic_ocr_model_predict_image():
-#     file = request.files['image']
-#     # load image and convert it to gray scale and resize it to 28*28 pixel image
-#     img = Image.open(file.stream).convert('L').resize((28, 28))
-#     # convert to 2D array and divide by 255.0 to get float values between 0 and 1
-#     img_array = np.array(img) / 255.0
-#     predictions = basic_ocr_model.predict( np.array([img_array]) )
-#     result = np.where(predictions[0] == np.amax(predictions[0]))[0][0]    
-#     return jsonify({'found number': int(result)})
+#!!!!!!temp
+max_length = 50
 
+characters = [' ', '!', '"', '#', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ':', ';', '?', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
 
-# A utility function to decode the output of the captcha network
-def catpcha_model_decode_batch_predictions(pred):
+char_to_num = layers.StringLookup(vocabulary=list(characters), mask_token=None)
+num_to_char = layers.StringLookup(vocabulary=char_to_num.get_vocabulary(), mask_token=None, invert=True)
+
+def decode_cnn_ocr_prediction_model(pred):
     input_len = np.ones(pred.shape[0]) * pred.shape[1]
     # Use greedy search. For complex tasks, you can use beam search
     results = keras.backend.ctc_decode(pred, input_length=input_len, greedy=True)[0][0][:, :max_length]
     # Iterate over the result and get back the text
     output_text = []
     for res in results:
-        res = tf.strings.reduce_join(num_to_char(res)).numpy().decode("utf-8")
+        res = tf.strings.reduce_join(num_to_char(res)).numpy().decode("utf-8").replace('[UNK]', '').strip('0')
         output_text.append(res)
     return output_text
 
-@app.route('/ocr-captcha-model/predict_image', methods=['POST'])
+image_height = 50
+image_width = 200
+
+def encode_single_sample(image_path, label):
+    # Read the image with tensorflow
+    image = tf.io.read_file(image_path)
+    # Decode and convert to gray scale (whith channel = 1), we don't need colors to get the label of an image
+    image = tf.io.decode_png(image, channels=1)
+    # Convert image array into float32 in range [0, 1]
+    image = tf.image.convert_image_dtype(image, tf.float32)
+    # Resize image to the desired size
+    image = tf.image.resize(image, [image_height, image_width])
+    # Transpose the image data array because we want the third dimension to corresponde to the width
+    image = tf.transpose(image, perm=[1, 0, 2])
+    # Map the label characters to numbers
+    label = char_to_num(tf.strings.unicode_split(label, input_encoding="UTF-8"))
+    # Return the corresponding dictionary
+    return {"image": image, "label": label}
+
+@app.route('/cnn-ocr-model/predict_image', methods=['POST'])
 def ocr_captcha_model_perdict_image():
+    # Get file from HTTP
     file = request.files['image']
-    # load image and convert it to gray scale and resize it to 200*50 pixel image
-    img = Image.open(file.stream).convert('L').resize((200, 50))
-    # convert to 2D array and divide by 255.0 to get float values between 0 and 1
-    img_array = np.array(img) / 255.0
-    img_array = img_array.reshape((200, 50, 1))
-    print(f"img_array shape = {img_array.shape}")
-    pred = ocr_captcha_prediction_model.predict(img_array)
-    print(pred)
-    return "OK"
+    # Create full filepath  
+    filepath = UPLOADED_FILE_DIRECTORY + file.filename
+    # Save file
+    file.save(filepath)
+    # # Read the image with tensorflow
+    # tf_image = tf.io.read_file(filepath)
+    # # Decode and convert to gray scale (whith channels = 1)
+    # tf_image = tf.io.decode_png(tf_image, channels=1)
+    # # Convert image array into float32 in range [0, 1]
+    # tf_image = tf.image.convert_image_dtype(tf_image, tf.float32)
+    # # Resize image to desired size [height, width]
+    # tf_image = tf.image.resize(tf_image, [50, 200])
+    # # Transpose the image data array because we want the third dimension to corresponde to the width
+    # tf_image = tf.transpose(tf_image, perm=[1, 0, 2])
+
+    #########
+    #########
+
+    data = tf.data.Dataset.from_tensor_slices(
+        ([filepath], ["None"])
+    ).map(
+        encode_single_sample,
+        num_parallel_calls=tf.data.AUTOTUNE
+    ).batch(32).prefetch(buffer_size=tf.data.AUTOTUNE)
+
+    for batch in data.take(1):
+        batch_images = batch["image"]
+        preds = cnn_ocr_prediction_model.predict(batch_images)
+        pred_text = decode_cnn_ocr_prediction_model(preds)
+        print(pred_text)
+
+
+    # os.remove(filepath)
+    
+    # prediction = cnn_ocr_prediction_model.predict(tf_image)
+    # predicted_text = decode_cnn_ocr_prediction_model(prediction)
+    # print(predicted_text)
+
+    return jsonify({"text": pred_text[0]})
