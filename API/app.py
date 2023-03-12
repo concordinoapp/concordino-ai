@@ -15,7 +15,7 @@ UPLOADED_FILE_DIRECTORY = os.getcwd() + "/" + "__uploaded_files__/"
 if os.path.exists(UPLOADED_FILE_DIRECTORY) == False:
     os.makedirs(UPLOADED_FILE_DIRECTORY)
 
-cnn_ocr_model = tf.keras.models.load_model('./models/CNN-OCR-MODEL/')
+cnn_ocr_model = tf.keras.models.load_model('./models/CNN-OCR-MODEL-SAVE-V2/')
 cnn_ocr_prediction_model = keras.models.Model(
     cnn_ocr_model.get_layer(name='image').input,
     cnn_ocr_model.get_layer(name='dense2').output
@@ -44,8 +44,8 @@ def decode_cnn_ocr_prediction_model(pred):
         output_text.append(res)
     return output_text
 
-image_height = 50
-image_width = 200
+image_height = 32
+image_width = 128
 
 def encode_single_sample(image_path, label):
     # Read the image with tensorflow
