@@ -101,6 +101,6 @@ def load_dataset(dataset_path):
     )
     dataset = dataset + _get_EMNIST_handwritten_data(os.path.join(dataset_path, "EMNIST-Handwritten-Characters-French/"))
     dataset = dataset + _get_handwritten_generated_dataset(os.path.join(dataset_path, "handwritten-generated-text"))
-    dataset = dataset + _get_virtual_dataset(os.path.join(dataset_path, "Virtual-Dataset", "only-images"))
-    dataset = dataset + _get_virtual_dataset(os.path.join(dataset_path, "Virtual-Dataset", "mixed"))
+    # dataset = dataset + _get_virtual_dataset(os.path.join(dataset_path, "Virtual-Dataset", "only-images"))
+    # dataset = dataset + _get_virtual_dataset(os.path.join(dataset_path, "Virtual-Dataset", "mixed"))
     return dataset[:80_000]

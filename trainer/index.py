@@ -59,6 +59,7 @@ else:
     if os.path.exists('./history.txt'):
         os.remove('./history.txt')
 logger.log("Loading datasets...")
+
 dataset = []
 image_paths_file = open('./image_paths.txt', 'r')
 labels_file = open('./labels.txt', 'r')
@@ -75,12 +76,20 @@ for i in range(len(image_paths_file_lines)):
 image_paths_file.close()
 labels_file.close()
 
+# dataset = load_dataset('./data')
+
+# images_path_file = open('./image_paths.txt', 'a+')
+# labels_file = open('./labels.txt', 'a+')
+# for data in dataset:
+#     images_path_file.write(f"{data['image_path']}\n")
+#     labels_file.write(f"{data['label']}\n")
+# exit(0)
 logger.log("Formatting dataset...")
 
 # For computer vision deep learning, there is a consensus saying that a dataset of 1000 labeled images for each classes is needed
 # image_paths = list(map(lambda data: data["image_path"], dataset))
 
-np.random.shuffle(dataset)
+# np.random.shuffle(dataset)
 labels = list(map(lambda data: data["label"], dataset))#  .replace('|',  '\n'), dataset))
 
 train_ds = dataset[:int(0.98*len(dataset))] #98% of the whole dataset is train dataset
@@ -90,6 +99,7 @@ test_ds = dataset[int(0.99*len(dataset)):] #1% is test dataset
 AUTOTUNE = tf.data.AUTOTUNE # Let tf decide the best tunning algos
 
 characters = sorted(list(set(char for label in labels for char in label)))
+print(f"NUMBER OF INPUTS : {len(characters)}")
 max_len = len(max(labels, key=len))
 
 # Mapping characters to integer -> returns a function
@@ -295,9 +305,6 @@ def calculate_edit_distance(labels, predictions):
     )
     return tf.reduce_mean(edit_distances)
 
-
-
-
 class EditDistanceCallback(keras.callbacks.Callback):
     def __init__(self, pred_model):
         super().__init__()
@@ -313,13 +320,11 @@ class EditDistanceCallback(keras.callbacks.Callback):
 
         history_file = open('./history.txt', "a+")
         lines = history_file.readlines()
-        actual_epoch = len(lines) + 2
         mean_edit_distance = np.mean(edit_distances)
-        actual_epoch = actual_epoch + 1
-        history_file.write(f"{actual_epoch} {mean_edit_distance:.4f}\n")
+        history_file.write(f"{mean_edit_distance:.4f}\n")
         history_file.close()
         print(
-            f"Mean edit distance for epoch {actual_epoch}: {mean_edit_distance:.4f}"
+            f"Mean edit distance for epoch {epoch}: {mean_edit_distance:.4f}"
         )
 
 

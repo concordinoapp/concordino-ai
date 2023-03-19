@@ -1,3 +1,7 @@
+étape 1 : on a éssayer avec mots, etc...
+étape 2: uniquement phrases
+
+
 EMNIST : que des lettres,  peux insiter à uniquement reconnaitre des lettres, pas des mots, donc pas forcément bien
 DDI-100 -> voir si ça peut s'appliquer à juste des mots
 RoadText1K -> Pas mal mais pas manuscrit donc ne pas trop en abuser
@@ -50,3 +54,14 @@ https://www.semanticscholar.org/paper/A-Handwritten-French-Dataset-for-Word-Spot
     - mettre une VARAIABLE_GLOBALE en haut du notebook, qui est un boolean pour savoir si on regéner ou pas
     - METTRE UNE BARRE DE CHARGEMENT POUR VOIR l'avancée
     
+    
+-- CHECKER LES GUILLEMETS, PARENTHESE, ETC... QUI NE SE METTENT PAS CORRECTEMENT
+-- faut il vrm mettre des 
+-- ON A EGALEMENT UN PROBL SUR LES EMNIST HANDWRITTEN : les LABELS NE SONT PAS BON, ON A QUE CERTAINS OU LES PREMIERS MOTS (voir vitrual dataset image 0 .png pour s'en rendre comtpe)
+
+-- changer le handwritten generated dataset pour qu'il ai de mots bien formés ? POur luio pparende réellement des mots réel de la langue frannçaise
+-- corriger majuscule dans iit5kword -> impossible, bcp trop long
+
+-- https://stackoverflow.com/questions/51113328/keras-high-loss-not-decreasing-with-each-epoch
+    --> peut être entrainer qu'avec les mots puis une fois dans l'API spliter l'image et faire deviner image par image
+        puis ajouter chaque string au final
