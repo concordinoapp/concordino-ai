@@ -1,0 +1,2 @@
+CHECK IF THERE IS WRITING IN EACH IMAGES WITH THE PYTHON LIB (CANT REMEMBER THE NAME) TO CLASSIFY DATASET
+ensuite il feudait juste dans une dossier mettre 1.png, 2.png, etc.. et 1 fichier texte avece une liste pour le nom de chaques

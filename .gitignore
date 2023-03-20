@@ -139,3 +139,13 @@ ocr-machine-learning-research/text_detector_using-EAST/*.png
 ocr-machine-learning-research/text_detector_using-EAST/*.jpg
 ocr-machine-learning-research/text_detector_using-EAST/*.jpeg
 data-generator/data
+
+
+# Exceptions
+!datasets/fonts/
+!datasets/fonts/text-detection/
+!datasets/fonts/wine_dataset/
+!datasets/fonts/wine_images/
+!datasets/fonts/howToDownloadCaptcha.txt/
+!datasets/fonts/vin_db.json/
+
