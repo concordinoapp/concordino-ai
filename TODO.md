@@ -18,6 +18,8 @@ générer images avec fond blanc et entrainer IA :
 -----------------------------------------------
 
 mieux générer la data : 
+    -> scrapper ce site et récupérer les noms : https://www.thebeerguy.ca/alphabetical-list-of-wine/page/15/
+    -> pour chaque font (ou presque, enlever cells trop fines) -> générer des images correctement centrées et formatées pour chaque nom, date, etc...
 
 
 
