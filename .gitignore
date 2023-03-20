@@ -133,3 +133,9 @@ API/__uploaded_files__/
 ocr-machine-learning-research/CNN-OCR-MODEL/data/
 dataset_download
 trainer/data
+TODO.md
+data-generator/assets
+ocr-machine-learning-research/text_detector_using-EAST/*.png
+ocr-machine-learning-research/text_detector_using-EAST/*.jpg
+ocr-machine-learning-research/text_detector_using-EAST/*.jpeg
+data-generator/data
