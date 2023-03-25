@@ -44,7 +44,6 @@ def _get_cleaned_boxes(boxes, img_shape, percentage): #shape is in formt (width,
                 if boxes[i] == boxes[j] or _are_same_boxes(boxes[i], boxes[j], percentage):
                     indices_to_remove.append(j)
                     # print(f"diff = {diff}, x_i = {x_i}, y_i = {y_i}, w_i = {w_i}, h_i = {h_i}, x_j = {x_j}, y_j = {y_j}, w_j = {w_j}, h_j = {h_j}, ")
-    print(indices_to_remove)
     indices_to_remove = list(set(indices_to_remove))
     for i in sorted(indices_to_remove, reverse=True):
         del boxes[i]
@@ -75,5 +74,7 @@ def ocr_model_perdict_image(pred_model, uploaded_file_dir, char_to_num, num_to_c
     boxes = _get_cleaned_boxes(boxes, (img.shape[1], img.shape[0]), 5)
     boxed_files = save_boxed_images(img, boxes, cropped_dir, file.filename)
     text_list = [_get_text(img_path, pred_model, char_to_num, num_to_char) for img_path in boxed_files]
-    print(text_list)
+    for boxed_file in boxed_files:
+        os.remove(boxed_file)
+    os.remove(filepath)
     return jsonify({"text": text_list})
