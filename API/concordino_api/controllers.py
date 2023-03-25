@@ -62,19 +62,17 @@ def save_boxed_images(src_img, boxes, save_dir, image_name): #return list of box
     return boxed_files
 
 def ocr_model_perdict_image(pred_model, uploaded_file_dir, char_to_num, num_to_char):
+    if os.path.exists(uploaded_file_dir) == False: os.makedirs(uploaded_file_dir)
     cropped_dir = os.path.join(uploaded_file_dir, "cropped")
-    file = request.files['image'] # Get file from HTTP    
+    file = request.files['image'] # Get file from HTTP
     filepath = uploaded_file_dir + file.filename # Create full filepath      
     file.save(filepath) # Save file
     img = cv2.imread(filepath)
     img_data = pytesseract.image_to_data(img, output_type=Output.DICT)
-    boxes = []
-    for i in range(len(img_data['level'])): boxes.append( (img_data['left'][i], img_data['top'][i], img_data['width'][i], img_data['height'][i]) )
+    boxes = [  (img_data['left'][i], img_data['top'][i], img_data['width'][i], img_data['height'][i]) for i in range(len(img_data['level'])) ]
     boxes = list(set(boxes))
     boxes = _get_cleaned_boxes(boxes, (img.shape[1], img.shape[0]), 5)
     boxed_files = save_boxed_images(img, boxes, cropped_dir, file.filename)
     text_list = [_get_text(img_path, pred_model, char_to_num, num_to_char) for img_path in boxed_files]
-    for boxed_file in boxed_files:
-        os.remove(boxed_file)
     os.remove(filepath)
     return jsonify({"text": text_list})
