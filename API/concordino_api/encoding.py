@@ -2,6 +2,7 @@ import tensorflow as tf
 from tensorflow.keras import layers
 import numpy as np
 from tensorflow import keras
+from .model import load_model, load_prediciton_model
 
 MAX_LENGTH=32
 
@@ -32,7 +33,6 @@ def encode_single_sample(image_path, label, char_to_num, image_height=64, image_
     # Return the corresponding dictionary
     return {"image": image, "label": label}
 
-
 def decode_cnn_ocr_prediction_model(pred, num_to_char, max_length=MAX_LENGTH):
     input_len = np.ones(pred.shape[0]) * pred.shape[1]
     # Use greedy search. For complex tasks, you can use beam search
@@ -40,6 +40,6 @@ def decode_cnn_ocr_prediction_model(pred, num_to_char, max_length=MAX_LENGTH):
     # Iterate over the result and get back the text
     output_text = []
     for res in results:
-        res = tf.strings.reduce_join(num_to_char(res)).numpy().decode("utf-8").replace('[UNK]', '').strip('0')
+        res = tf.strings.reduce_join(num_to_char(res)).numpy().decode("utf-8").replace('[UNK]', '')
         output_text.append(res)
     return output_text
