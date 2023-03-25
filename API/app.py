@@ -1,7 +1,9 @@
-from flask import Flask
+from dotenv import load_dotenv
+load_dotenv()
 import os
+from flask import Flask
 from concordino_api.utils import create_temp_upload_dir
-from concordino_api.encoding import encode_single_sample, decode_cnn_ocr_prediction_model, get_str_lookup_functions
+from concordino_api.encoding import get_str_lookup_functions
 from concordino_api.model import load_model, load_prediciton_model
 from concordino_api.controllers import ping, ocr_model_perdict_image
 
