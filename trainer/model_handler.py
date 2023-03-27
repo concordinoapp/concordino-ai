@@ -71,10 +71,10 @@ def build_model(n_neurons, learning_rate, image_width, image_height, char_to_num
 
     # RNNs.
     x = keras.layers.Bidirectional(
-        keras.layers.LSTM(n_neurons, return_sequences=True, dropout=0.25)
+        keras.layers.LSTM(128, return_sequences=True, dropout=0.25)
     )(x)
     x = keras.layers.Bidirectional(
-        keras.layers.LSTM(n_neurons, return_sequences=True, dropout=0.25)
+        keras.layers.LSTM(64, return_sequences=True, dropout=0.25)
     )(x)
 
     # +2 is to account for the two special tokens introduced by the CTC loss.
