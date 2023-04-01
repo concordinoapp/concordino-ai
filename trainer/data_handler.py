@@ -98,5 +98,6 @@ def prepare_dataset(image_paths, labels, batch_size, img_size, max_len, char_to_
     return tf.data.Dataset.from_tensor_slices(
         (image_paths, labels)
     ).map(
-        lambda image_path, label: process_images_labels(image_path, label, img_size, max_len, char_to_num), num_parallel_calls=AUTOTUNE
+        lambda image_path, label: process_images_labels(image_path, label, img_size, max_len, char_to_num),
+        num_parallel_calls=AUTOTUNE,
     ).batch(batch_size)
