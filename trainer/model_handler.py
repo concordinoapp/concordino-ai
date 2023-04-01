@@ -70,11 +70,7 @@ def build_model(n_neurons, learning_rate, image_width, image_height, char_to_num
 
     # RNNs.
     x = keras.layers.Bidirectional(
-<<<<<<< HEAD
         keras.layers.LSTM(n_neurons * 2, return_sequences=True, dropout=0.25)
-=======
-        keras.layers.LSTM(128, return_sequences=True, dropout=0.25)
->>>>>>> 47b94019074e461d846c760ffc4b91f4ba97a361
     )(x)
     x = keras.layers.Bidirectional(
         keras.layers.LSTM(64, return_sequences=True, dropout=0.25)
