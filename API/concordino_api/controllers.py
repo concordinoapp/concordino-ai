@@ -7,6 +7,7 @@ import pytesseract
 from pytesseract import Output
 import numpy as np
 from PIL import Image
+import re
 
 pytesseract.pytesseract.tesseract_cmd = os.getenv("TESSERACT_PATH")
 
@@ -97,9 +98,13 @@ def ocr_model_perdict_image(pred_model, uploaded_file_dir, char_to_num, num_to_c
         opening = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, kernel, iterations=1)
         invert = 255 - opening
 
-        # Perform text extraction
-        data = pytesseract.image_to_string(invert, lang='eng', config='--psm 6')
+        # Perform text extraction        
+        data = pytesseract.image_to_string(invert, lang='eng')
         print(data)
+        # data = pytesseract.image_to_string(invert, lang='eng')
+        data = data.split('\n')
+        data = list(map(lambda x: re.sub(r'[^A-Za-z0-9 ]+', '', x), data))
+        data = [ x for x in data if x != '']
         # os.remove(filepath)
         return jsonify({"text": data})
     return jsonify({"text": "None"})
