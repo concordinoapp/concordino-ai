@@ -66,11 +66,11 @@ def save_boxed_images(src_img, boxes, save_dir, image_name): #return list of box
 def img_to_txt(img):
     return
 
-def ocr_model_perdict_image(pred_model, uploaded_file_dir, char_to_num, num_to_char, use_tesseract):
+def ocr_model_perdict_image(pred_model, uploaded_file_dir, char_to_num, num_to_char, mode):
     
     if os.path.exists(uploaded_file_dir) == False: os.makedirs(uploaded_file_dir)
     cropped_dir = os.path.join(uploaded_file_dir, "cropped")
-    if use_tesseract == False:
+    if mode == "model":
         file = request.files['image'] # Get file from HTTP
         filepath = uploaded_file_dir + file.filename # Create full filepath      
         file.save(filepath) # Save file
@@ -83,7 +83,7 @@ def ocr_model_perdict_image(pred_model, uploaded_file_dir, char_to_num, num_to_c
         text_list = [_get_text(img_path, pred_model, char_to_num, num_to_char) for img_path in boxed_files]
         # os.remove(filepath)
         return jsonify({"text": text_list})
-    elif use_tesseract == True:
+    elif mode == "tesseract":
         file = request.files['image'] # Get file from HTTP
         filepath = uploaded_file_dir + file.filename # Create full filepath      
         print(filepath)
@@ -107,4 +107,5 @@ def ocr_model_perdict_image(pred_model, uploaded_file_dir, char_to_num, num_to_c
         data = [ x for x in data if x != '']
         # os.remove(filepath)
         return jsonify({"text": data})
+    # elif mode == "easyocr"
     return jsonify({"text": "None"})
