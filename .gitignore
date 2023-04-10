@@ -151,3 +151,7 @@ data-generator/data
 
 research-and-experimentations/MODEL-V4/data.txt
 research-and-experimentations/MODEL-V3/trainer/data/
+*.ckpt.index
+checkpoint
+cp-*
+trainer/data.txt

@@ -1,8 +1,6 @@
 import tensorflow as tf
 from tensorflow import keras
 
-
-
 class CTCLayer(keras.layers.Layer):
     def __init__(self, name=None):
         super().__init__(name=name)
@@ -28,7 +26,7 @@ def build_model(n_neurons, learning_rate, image_width, image_height, char_to_num
     
     # First conv block.
     x = keras.layers.Conv2D(
-        n_neurons,
+        int(n_neurons / 2),
         (3, 3),
         activation="relu",
         kernel_initializer="he_normal",
@@ -47,16 +45,17 @@ def build_model(n_neurons, learning_rate, image_width, image_height, char_to_num
         name="Conv2",
     )(x)
     x = keras.layers.MaxPooling2D((2, 2), name="pool2")(x)
+   
     # Third conv block.
-    x = keras.layers.Conv2D(
-        n_neurons,
-        (3, 3),
-        activation="relu",
-        kernel_initializer="he_normal",
-        padding="same",
-        name="Conv3",
-    )(x)
-    x = keras.layers.MaxPooling2D((2, 2), name="pool3")(x)
+    # x = keras.layers.Conv2D(
+    #     n_neurons,
+    #     (3, 3),
+    #     activation="relu",
+    #     kernel_initializer="he_normal",
+    #     padding="same",
+    #     name="Conv3",
+    # )(x)
+    # x = keras.layers.MaxPooling2D((2, 2), name="pool3")(x)
 
     # We have used two max pool with pool size and strides 2.
     # Hence, downsampled feature maps are 4x smaller. The number of
@@ -71,7 +70,7 @@ def build_model(n_neurons, learning_rate, image_width, image_height, char_to_num
 
     # RNNs.
     x = keras.layers.Bidirectional(
-        keras.layers.LSTM(128, return_sequences=True, dropout=0.25)
+        keras.layers.LSTM(n_neurons * 2, return_sequences=True, dropout=0.25)
     )(x)
     x = keras.layers.Bidirectional(
         keras.layers.LSTM(64, return_sequences=True, dropout=0.25)
@@ -80,7 +79,7 @@ def build_model(n_neurons, learning_rate, image_width, image_height, char_to_num
     # +2 is to account for the two special tokens introduced by the CTC loss.
     # The recommendation comes here: https://git.io/J0eXP.
     x = keras.layers.Dense(
-        len(char_to_num.get_vocabulary()) + 2, activation="softmax", name="dense2"
+        len(char_to_num.get_vocabulary()) + 2, activation="softmax", name="dense3"
     )(x)
 
     # Add CTC layer for calculating CTC loss at each step.
@@ -94,6 +93,6 @@ def build_model(n_neurons, learning_rate, image_width, image_height, char_to_num
     # opt = keras.optimizers.Adam()
     opt = keras.optimizers.Adam(learning_rate=learning_rate)
     # Compile the model and return.
-    model.compile(optimizer=opt)
+    model.compile(optimizer=opt, run_eagerly=True)
     return model
 
