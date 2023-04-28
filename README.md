@@ -1,4 +1,7 @@
-# Concordino AI API
+# Concordino AI :
+
+# This repository is cloned repository with added features to the API and the research section.
+# Please refer to the "research-and-experimentations" folder to see the research conducted
 
 This project is a simple API  making the AI servicces available over the HTTP protocol. It is made with flask and also uses numpy, Pillow as well as tensorflow for loading the AI model.
 
